@@ -71,7 +71,6 @@ Provide:
 
 If the image does not contain a waste item, set confidence to 0 and explain in item_description.`,
         file_urls: [file_url],
-        model: 'claude_sonnet_4_6',
         response_json_schema: {
           type: 'object',
           properties: {
