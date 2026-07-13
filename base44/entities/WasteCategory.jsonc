@@ -1,0 +1,53 @@
+{
+  "name": "WasteCategory",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Waste category name (e.g. Plastic, Paper, Glass, Metal, Organic, Electronic)"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex color for UI badges"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Lucide icon name for this category"
+    },
+    "description": {
+      "type": "string",
+      "description": "General description of this waste category"
+    },
+    "disposal_instructions": {
+      "type": "string",
+      "description": "How to properly dispose of this waste type"
+    },
+    "recycling_tips": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Practical recycling tips"
+    },
+    "environmental_impact": {
+      "type": "string",
+      "description": "Environmental impact information"
+    },
+    "common_examples": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Common items in this category"
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "disposal_instructions"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "ClassificationRecord",
+  "type": "object",
+  "properties": {
+    "image_url": {
+      "type": "string",
+      "description": "URL of the uploaded waste image"
+    },
+    "predicted_category": {
+      "type": "string",
+      "description": "AI-predicted waste category"
+    },
+    "category_slug": {
+      "type": "string",
+      "description": "Slug of the predicted category"
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Confidence score 0-1"
+    },
+    "item_description": {
+      "type": "string",
+      "description": "Brief description of the identified waste item"
+    },
+    "recycling_instructions": {
+      "type": "string",
+      "description": "AI-generated recycling instructions"
+    },
+    "disposal_tips": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Practical disposal tips"
+    },
+    "environmental_impact": {
+      "type": "string",
+      "description": "Environmental impact of this item"
+    }
+  },
+  "required": [
+    "image_url",
+    "predicted_category"
+  ]
+}
