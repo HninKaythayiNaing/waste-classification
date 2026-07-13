@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Sparkles, AlertCircle, Loader2, RotateCcw, Leaf } from 'lucide-react';
+import { Sparkles, AlertCircle, Loader2, RotateCcw, Leaf, Upload, Camera } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import WasteImageUploader from '@/components/WasteImageUploader';
+import CameraCapture from '@/components/CameraCapture';
 import ClassificationResultCard from '@/components/ClassificationResultCard';
 import Layout from '@/components/Layout';
 
@@ -13,6 +14,7 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [category, setCategory] = useState(null);
   const [categories, setCategories] = useState({});
+  const [captureMode, setCaptureMode] = useState('upload');
 
   useEffect(() => {
     base44.entities.WasteCategory.list().then(cats => {
@@ -22,6 +24,8 @@ export default function Home() {
     }).catch(() => {});
   }, []);
 
+  const [cameraPreviewUrl, setCameraPreviewUrl] = useState(null);
+
   const handleImageUploaded = useCallback((file, errMsg) => {
     if (errMsg) {
       setError(errMsg);
@@ -30,6 +34,14 @@ export default function Home() {
     }
     setError(null);
     setSelectedFile(file);
+    setResult(null);
+    setCategory(null);
+  }, []);
+
+  const handleCameraCapture = useCallback((file) => {
+    setError(null);
+    setSelectedFile(file);
+    setCameraPreviewUrl(URL.createObjectURL(file));
     setResult(null);
     setCategory(null);
   }, []);
@@ -109,6 +121,7 @@ If the image does not contain a waste item, set confidence to 0 and explain in i
   const handleReset = () => {
     setSelectedFile(null);
     setImagePreviewUrl(null);
+    setCameraPreviewUrl(null);
     setResult(null);
     setCategory(null);
     setError(null);
@@ -138,13 +151,61 @@ If the image does not contain a waste item, set confidence to 0 and explain in i
           {/* Upload panel */}
           <div className="space-y-4">
             <div className="bg-white rounded-2xl border border-stone-200 p-5">
-              <h2 className="font-semibold text-stone-800 mb-1">Upload Waste Image</h2>
-              <p className="text-xs text-stone-400 mb-4">Take or upload a clear photo of the waste item</p>
-              <WasteImageUploader
-                onImageUploaded={handleImageUploaded}
-                uploading={analyzing}
-                disabled={!!result}
-              />
+              <h2 className="font-semibold text-stone-800 mb-1">Waste Image</h2>
+              <p className="text-xs text-stone-400 mb-4">Take a real-time photo or upload an image of the waste item</p>
+
+              <div className="flex gap-1 mb-4 bg-stone-100 rounded-lg p-1">
+                <button
+                  onClick={() => setCaptureMode('upload')}
+                  disabled={!!selectedFile}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    captureMode === 'upload' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-500'
+                  }`}
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  Upload
+                </button>
+                <button
+                  onClick={() => setCaptureMode('camera')}
+                  disabled={!!selectedFile}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    captureMode === 'camera' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-500'
+                  }`}
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  Camera
+                </button>
+              </div>
+
+              {captureMode === 'upload' ? (
+                <WasteImageUploader
+                  onImageUploaded={handleImageUploaded}
+                  uploading={analyzing}
+                  disabled={!!result}
+                />
+              ) : cameraPreviewUrl ? (
+                <div className="relative rounded-2xl overflow-hidden bg-stone-100 border border-stone-200">
+                  <img src={cameraPreviewUrl} alt="Captured waste" className="w-full max-h-80 object-contain" />
+                  {!analyzing && !result && (
+                    <button
+                      onClick={handleReset}
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center text-stone-600 hover:text-red-500 transition-colors"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+                  )}
+                  {analyzing && (
+                    <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+                      <div className="flex items-center gap-2 text-stone-600">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span className="text-sm font-medium">Analyzing image…</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <CameraCapture onCapture={handleCameraCapture} disabled={analyzing} />
+              )}
               {error && (
                 <div className="mt-3 flex items-start gap-2 p-3 rounded-lg bg-red-50 text-red-600 text-sm">
                   <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
