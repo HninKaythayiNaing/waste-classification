@@ -9,13 +9,10 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      base44.asServiceRole.entities.ClassificationRecord.list('-created_date', 500),
-      base44.asServiceRole.entities.User.list()
-    ])
-      .then(([recs, usrs]) => {
-        setRecords(recs);
-        setUsers(usrs);
+    base44.functions.invoke('getAdminStats', {})
+      .then(({ data }) => {
+        setRecords(data.records || []);
+        setUsers(data.users || []);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
