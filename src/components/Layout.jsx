@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Recycle, Home, History, LayoutDashboard, Leaf } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { base44 } from '@/api/base44Client';
+import Logo from '@/components/Logo';
 
 const navItems = [
   { label: 'Classify Waste', path: '/', icon: Home },
@@ -25,11 +26,9 @@ export default function Layout({ children }) {
       <aside className="hidden md:flex w-64 flex-col bg-white border-r border-stone-200 fixed inset-y-0 left-0 z-30">
         <div className="p-6 border-b border-stone-200">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-sm">
-              <Recycle className="w-5 h-5 text-white" />
-            </div>
+            <Logo size={36} />
             <div>
-              <h1 className="font-heading font-bold text-stone-800 text-sm leading-tight">EcoSort</h1>
+              <h1 className="font-heading font-bold text-stone-800 text-sm leading-tight">Snap it Sort it</h1>
               <p className="text-[10px] text-stone-400 leading-tight">AI Waste Classifier</p>
             </div>
           </Link>
@@ -80,10 +79,8 @@ export default function Layout({ children }) {
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 inset-x-0 z-30 bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
-            <Recycle className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
-          </div>
-          <span className="font-heading font-bold text-stone-800 text-sm">EcoSort</span>
+          <Logo size={32} />
+          <span className="font-heading font-bold text-stone-800 text-sm">Snap it Sort it</span>
         </Link>
         <Leaf className="w-5 h-5 text-emerald-500" />
       </div>

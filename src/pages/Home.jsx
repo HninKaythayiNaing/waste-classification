@@ -138,8 +138,9 @@ If the image does not contain a waste item, set confidence to 0 and explain in i
             <span className="text-xs font-medium uppercase tracking-widest opacity-80">AI-Powered Waste Classifier</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-heading font-bold leading-tight mb-2">
-            Snap it. Sort it. Save the planet.
+            Snap it, Sort it
           </h1>
+          <p className="text-emerald-50/90 text-xs font-medium mb-1">Save the planet, one item at a time.</p>
           <p className="text-emerald-50/90 text-sm md:text-base max-w-lg">
             Upload a photo of any waste item and get instant AI classification with recycling recommendations.
           </p>
