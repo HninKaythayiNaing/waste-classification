@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { History as HistoryIcon, Trash2, Calendar, ChevronRight } from 'lucide-react';
+import { History as HistoryIcon, Trash2, Calendar, ChevronRight, Filter } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import Layout from '@/components/Layout';
 
 export default function History() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('all');
 
   useEffect(() => {
     base44.entities.ClassificationRecord.list('-created_date', 50)
@@ -29,6 +30,20 @@ export default function History() {
     metal: '#64748b', organic: '#65a30d', electronic: '#7c3aed'
   };
 
+  const filters = [
+    { slug: 'all', label: 'All' },
+    { slug: 'plastic', label: 'Plastic' },
+    { slug: 'paper', label: 'Paper' },
+    { slug: 'glass', label: 'Glass' },
+    { slug: 'metal', label: 'Metal' },
+    { slug: 'organic', label: 'Organic' },
+    { slug: 'electronic', label: 'Electronic' },
+  ];
+
+  const visibleRecords = activeFilter === 'all'
+    ? records
+    : records.filter(r => r.category_slug === activeFilter);
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-6 py-8">
@@ -42,21 +57,46 @@ export default function History() {
           </div>
         </div>
 
+          <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
+            <div className="flex items-center gap-1.5 text-stone-400 flex-shrink-0">
+              <Filter className="w-4 h-4" />
+            </div>
+            {filters.map(f => (
+              <button
+                key={f.slug}
+                onClick={() => setActiveFilter(f.slug)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 ${
+                  activeFilter === f.slug
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-4 border-stone-200 border-t-emerald-600 rounded-full animate-spin" />
           </div>
-        ) : records.length === 0 ? (
+        ) : visibleRecords.length === 0 ? (
           <div className="bg-white rounded-2xl border border-stone-200 p-12 text-center">
             <div className="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto mb-4">
               <HistoryIcon className="w-8 h-8 text-stone-300" />
             </div>
-            <h3 className="font-semibold text-stone-700 mb-1">No classifications yet</h3>
-            <p className="text-sm text-stone-400">Start classifying waste to build your history.</p>
+            <h3 className="font-semibold text-stone-700 mb-1">
+              {activeFilter === 'all' ? 'No classifications yet' : `No ${activeFilter} classifications`}
+            </h3>
+            <p className="text-sm text-stone-400">
+              {activeFilter === 'all'
+                ? 'Start classifying waste to build your history.'
+                : 'Try a different filter or classify more items.'}
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
-            {records.map(record => {
+            {visibleRecords.map(record => {
               const color = slugColors[record.category_slug] || '#16a34a';
               return (
                 <div key={record.id} className="bg-white rounded-2xl border border-stone-200 overflow-hidden group hover:shadow-sm transition-shadow">
