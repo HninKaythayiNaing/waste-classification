@@ -1,11 +1,22 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { Camera, X, RotateCcw } from 'lucide-react';
+import { Camera, X, RotateCcw, Lightbulb } from 'lucide-react';
+
+const QUICK_TIPS = [
+  'Rinse containers before recycling to avoid contamination.',
+  'Remove caps and labels from plastic bottles when possible.',
+  'Flatten cardboard boxes to save bin space.',
+  'Glass can be recycled endlessly without losing quality.',
+  'Pizza-stained paper belongs in compost, not recycling.',
+  'Don\'t bag recyclables — keep them loose in the bin.',
+  'Check local rules — recycling guidelines vary by region.',
+];
 
 export default function CameraCapture({ onCapture, disabled }) {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const [active, setActive] = useState(false);
   const [error, setError] = useState(null);
+  const [tipIndex, setTipIndex] = useState(0);
 
   const stopStream = useCallback(() => {
     if (streamRef.current) {
@@ -56,6 +67,14 @@ export default function CameraCapture({ onCapture, disabled }) {
     return () => stopStream();
   }, [stopStream]);
 
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => {
+      setTipIndex(prev => (prev + 1) % QUICK_TIPS.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, [active]);
+
   if (!active) {
     return (
       <div>
@@ -92,6 +111,12 @@ export default function CameraCapture({ onCapture, disabled }) {
         >
           <div className="w-9 h-9 rounded-full bg-emerald-500" />
         </button>
+      </div>
+      <div className="absolute top-3 left-3 right-12 flex items-start gap-2 bg-black/55 backdrop-blur-sm rounded-lg px-3 py-2 text-white max-w-[calc(100%-60px)]">
+        <Lightbulb className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-300" />
+        <p key={tipIndex} className="text-xs leading-snug transition-opacity duration-300">
+          {QUICK_TIPS[tipIndex]}
+        </p>
       </div>
     </div>
   );
