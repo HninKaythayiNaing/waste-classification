@@ -113,7 +113,8 @@ If the image does not contain a waste item, set confidence to 0 and explain in i
         item_description: llmResult.item_description,
         recycling_instructions: llmResult.recycling_instructions,
         disposal_tips: llmResult.disposal_tips,
-        environmental_impact: llmResult.environmental_impact
+        environmental_impact: llmResult.environmental_impact,
+        response_time_ms: Date.now() - startTime
       });
     } catch (err) {
       setError(err.message || 'Failed to classify the image. Please try again.');

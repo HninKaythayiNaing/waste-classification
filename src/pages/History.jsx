@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { History as HistoryIcon, Trash2, Calendar, ChevronRight, Filter } from 'lucide-react';
+import { History as HistoryIcon, Trash2, Calendar, ChevronRight, Filter, Clock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import Layout from '@/components/Layout';
 
@@ -125,6 +125,12 @@ export default function History() {
                             <Calendar className="w-3 h-3" />
                             {formatDate(record.created_date)}
                           </div>
+                          {record.response_time_ms != null && (
+                            <div className="inline-flex items-center gap-1 mt-1.5 text-xs text-stone-400">
+                              <Clock className="w-3 h-3" />
+                              {(record.response_time_ms / 1000).toFixed(1)}s response
+                            </div>
+                          )}
                         </div>
                         <button
                           onClick={() => handleDelete(record.id)}

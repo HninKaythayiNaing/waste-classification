@@ -36,6 +36,10 @@
     "environmental_impact": {
       "type": "string",
       "description": "Environmental impact of this item"
+    },
+    "response_time_ms": {
+      "type": "number",
+      "description": "Milliseconds taken to process the uploaded image and display the classification result"
     }
   },
   "required": [
