@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Package, Users, BarChart3, TrendingUp, Recycle } from 'lucide-react';
+import { LayoutDashboard, Package, Users, BarChart3, TrendingUp, Recycle, Clock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import Layout from '@/components/Layout';
 
@@ -27,6 +27,12 @@ export default function AdminDashboard() {
   const sortedCategories = Object.entries(categoryStats).sort((a, b) => b[1] - a[1]);
   const maxCount = sortedCategories.length > 0 ? sortedCategories[0][1] : 1;
 
+  const timedRecords = records.filter(r => r.response_time_ms != null);
+  const avgResponseMs = timedRecords.length > 0
+    ? timedRecords.reduce((sum, r) => sum + (r.response_time_ms || 0), 0) / timedRecords.length
+    : 0;
+  const avgResponseSeconds = (avgResponseMs / 1000).toFixed(1);
+
   const slugColors = {
     Plastic: '#2563eb', Paper: '#d97706', Glass: '#0d9488',
     Metal: '#64748b', 'Organic Waste': '#65a30d', 'Electronic Waste': '#7c3aed'
@@ -41,6 +47,7 @@ export default function AdminDashboard() {
     { label: 'Total Classifications', value: records.length, icon: Package, color: 'bg-emerald-50 text-emerald-600' },
     { label: 'Registered Users', value: users.length, icon: Users, color: 'bg-blue-50 text-blue-600' },
     { label: 'This Week', value: recentRecords.length, icon: TrendingUp, color: 'bg-amber-50 text-amber-600' },
+    { label: 'Avg Response Time', value: `${avgResponseSeconds}s`, icon: Clock, color: 'bg-teal-50 text-teal-600' },
     { label: 'Waste Categories', value: sortedCategories.length, icon: BarChart3, color: 'bg-purple-50 text-purple-600' },
   ];
 
@@ -140,9 +147,20 @@ export default function AdminDashboard() {
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-stone-700 truncate">{record.item_description || record.predicted_category}</p>
-                      <p className="text-xs text-stone-400">
-                        {new Date(record.created_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </p>
+                      <div className="flex items-center gap-2 text-xs text-stone-400">
+                        <span>
+                          {new Date(record.created_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </span>
+                        {record.response_time_ms != null && (
+                          <>
+                            <span>·</span>
+                            <span className="inline-flex items-center gap-0.5">
+                              <Clock className="w-3 h-3" />
+                              {(record.response_time_ms / 1000).toFixed(1)}s
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
                     <span
                       className="px-2.5 py-1 rounded-full text-xs font-medium text-white flex-shrink-0"
