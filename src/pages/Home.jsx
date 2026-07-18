@@ -12,6 +12,7 @@ export default function Home() {
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [responseTime, setResponseTime] = useState(null);
   const [category, setCategory] = useState(null);
   const [categories, setCategories] = useState({});
   const [captureMode, setCaptureMode] = useState('upload');
@@ -51,6 +52,8 @@ export default function Home() {
     setAnalyzing(true);
     setError(null);
     setResult(null);
+    setResponseTime(null);
+    const startTime = Date.now();
 
     try {
       // Step 1: Upload the image
@@ -99,6 +102,7 @@ If the image does not contain a waste item, set confidence to 0 and explain in i
 
       setResult(llmResult);
       setCategory(matchedCategory);
+      setResponseTime(Date.now() - startTime);
 
       // Step 4: Save classification record
       await base44.entities.ClassificationRecord.create({
@@ -125,6 +129,7 @@ If the image does not contain a waste item, set confidence to 0 and explain in i
     setResult(null);
     setCategory(null);
     setError(null);
+    setResponseTime(null);
   };
 
   return (
@@ -254,7 +259,7 @@ If the image does not contain a waste item, set confidence to 0 and explain in i
           {/* Result panel */}
           <div>
             {result ? (
-              <ClassificationResultCard result={result} category={category} />
+              <ClassificationResultCard result={result} category={category} responseTime={responseTime} />
             ) : (
               <div className="bg-white rounded-2xl border border-stone-200 p-8 h-full flex flex-col items-center justify-center text-center min-h-[300px]">
                 <div className="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center mb-4">

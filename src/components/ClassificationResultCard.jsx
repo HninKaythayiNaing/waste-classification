@@ -1,10 +1,11 @@
-import { CheckCircle2, Recycle, Trash2, Leaf, Lightbulb, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Recycle, Trash2, Leaf, Lightbulb, AlertCircle, Clock } from 'lucide-react';
 
-export default function ClassificationResultCard({ result, category }) {
+export default function ClassificationResultCard({ result, category, responseTime }) {
   if (!result) return null;
 
   const confidencePercent = Math.round((result.confidence || 0) * 100);
   const color = category?.color || '#16a34a';
+  const seconds = responseTime ? (responseTime / 1000).toFixed(1) : null;
 
   return (
     <div className="space-y-5">
@@ -34,6 +35,12 @@ export default function ClassificationResultCard({ result, category }) {
             </div>
             <span className="text-sm font-semibold">{confidencePercent}% confident</span>
           </div>
+          {seconds && (
+            <div className="mt-3 inline-flex items-center gap-1.5 bg-white/20 rounded-full px-2.5 py-1 text-xs font-medium">
+              <Clock className="w-3.5 h-3.5" />
+              Analyzed in {seconds}s
+            </div>
+          )}
         </div>
       </div>
 
